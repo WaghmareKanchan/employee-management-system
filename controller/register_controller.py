@@ -118,6 +118,6 @@ class RegisterController:
         
         # After registration, switches the right-side page
         # from RegisterView to EmployeeListView.
-        self.main_view.stack.setCurrentWidget(
-            self.employee_list_view
-        ) 
+        # self.main_view.stack.setCurrentWidget(
+        #     self.employee_list_view
+        # ) 
