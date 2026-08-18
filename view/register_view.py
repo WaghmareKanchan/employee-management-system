@@ -4,7 +4,9 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QComboBox,
     QPushButton,
-    QVBoxLayout
+    QVBoxLayout,
+    QHBoxLayout,
+    QMessageBox
 )
 
 from PyQt5.QtCore import pyqtSignal
@@ -12,137 +14,213 @@ from PyQt5.QtCore import pyqtSignal
 
 class RegisterView(QWidget):
 
-    # Signal is used to send employee data from View to Controller.
-    # object allows us to send the complete employee data together.
+    # Signal used to send employee data
+    # from View to Controller.
     register_employee_signal = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
 
-        # Calls the method that creates and arranges
-        # all the registration form widgets.
         self.setup_ui()
 
     def setup_ui(self):
 
-        # Sets the title of the Register page.
         self.setWindowTitle("Register Employee")
 
+        # ---------------- Title ----------------
+
+        title_label = QLabel("Register Employee")
+        title_label.setObjectName("titleLabel")
 
         # ---------------- Employee ID ----------------
 
-        # Creates a label for Employee ID.
         id_label = QLabel("Employee ID")
-
-        # Creates an input box where the user enters Employee ID.
         self.id_input = QLineEdit()
-
+        self.id_input.setPlaceholderText("Enter employee ID")
 
         # ---------------- Name ----------------
 
-        # Creates a label for employee name.
         name_label = QLabel("Name")
-
-        # Creates an input box for employee name.
         self.name_input = QLineEdit()
-
+        self.name_input.setPlaceholderText("Enter employee name")
 
         # ---------------- Email ----------------
 
-        # Creates a label for employee email.
         email_label = QLabel("Email")
-
-        # Creates an input box for employee email.
         self.email_input = QLineEdit()
-
+        self.email_input.setPlaceholderText("Enter email address")
 
         # ---------------- Phone ----------------
 
-        # Creates a label for employee phone number.
         phone_label = QLabel("Phone")
-
-        # Creates an input box for employee phone number.
         self.phone_input = QLineEdit()
-
+        self.phone_input.setPlaceholderText("Enter 10 digit phone number")
 
         # ---------------- Department ----------------
 
-        # Creates a label for department.
         department_label = QLabel("Department")
 
-        # QComboBox provides a dropdown list for selecting
-        # the employee's department.
         self.department_combo = QComboBox()
 
-        # Adds department options to the dropdown.
         self.department_combo.addItems([
             "IT",
             "HR",
             "Finance"
         ])
 
-
         # ---------------- Salary ----------------
 
-        # Creates a label for salary.
         salary_label = QLabel("Salary")
-
-        # Creates an input box for employee salary.
         self.salary_input = QLineEdit()
+        self.salary_input.setPlaceholderText("Enter salary")
 
+        # ---------------- Error Label ----------------
 
-        # ---------------- Register Button ----------------
+        self.error_label = QLabel("")
+        self.error_label.setObjectName("errorLabel")
 
-        # Creates the Register button.
+        # ---------------- Buttons ----------------
+
         self.register_button = QPushButton("Register")
+        self.register_button.setObjectName("registerButton")
 
-        # Connects the button click to register_employee().
-        # When the user clicks Register, the entered form data
-        # will be collected.
+        self.clear_button = QPushButton("Clear")
+        self.clear_button.setObjectName("clearButton")
+
+        # Register button
         self.register_button.clicked.connect(
             self.register_employee
         )
 
+        # Clear button
+        self.clear_button.clicked.connect(
+            self.clear_form
+        )
 
-        # ---------------- Layout ----------------
+        # ---------------- Button Layout ----------------
 
-        # Creates a vertical layout for the registration form.
+        button_layout = QHBoxLayout()
+
+        button_layout.addWidget(
+            self.register_button
+        )
+
+        button_layout.addWidget(
+            self.clear_button
+        )
+
+        # ---------------- Main Layout ----------------
+
         layout = QVBoxLayout()
 
-        # Adds Employee ID label and input field.
+        layout.setContentsMargins(
+            80, 40, 80, 40
+        )
+
+        layout.setSpacing(10)
+
+        layout.addWidget(title_label)
+
+        layout.addSpacing(15)
+
         layout.addWidget(id_label)
         layout.addWidget(self.id_input)
 
-        # Adds Name label and input field.
         layout.addWidget(name_label)
         layout.addWidget(self.name_input)
 
-        # Adds Email label and input field.
         layout.addWidget(email_label)
         layout.addWidget(self.email_input)
 
-        # Adds Phone label and input field.
         layout.addWidget(phone_label)
         layout.addWidget(self.phone_input)
 
-        # Adds Department label and dropdown.
         layout.addWidget(department_label)
         layout.addWidget(self.department_combo)
 
-        # Adds Salary label and input field.
         layout.addWidget(salary_label)
         layout.addWidget(self.salary_input)
 
-        # Adds Register button at the bottom of the form.
-        layout.addWidget(self.register_button)
+        layout.addSpacing(5)
 
-        # Applies the layout to the RegisterView.
+        layout.addWidget(self.error_label)
+
+        layout.addSpacing(10)
+
+        layout.addLayout(button_layout)
+
         self.setLayout(layout)
 
+        # ---------------- Styling ----------------
+
+        self.setStyleSheet("""
+        
+        QWidget {
+            background-color: #f5f7fa;
+            font-size: 14px;
+        }
+
+        QLabel {
+            color: #333333;
+            font-weight: 500;
+        }
+
+        #titleLabel {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        QLineEdit,
+        QComboBox {
+            background-color: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 9px;
+            min-height: 18px;
+        }
+
+        QLineEdit:focus,
+        QComboBox:focus {
+            border: 2px solid #2563eb;
+        }
+
+        #registerButton {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        #registerButton:hover {
+            background-color: #1d4ed8;
+        }
+
+        #clearButton {
+            background-color: #e5e7eb;
+            color: #333333;
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        #clearButton:hover {
+            background-color: #d1d5db;
+        }
+
+        #errorLabel {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        """)
 
     def register_employee(self):
 
-        # Collects the data entered by the user in the GUI.
+        # Collect employee data.
         employee = [
             self.id_input.text(),
             self.name_input.text(),
@@ -152,7 +230,32 @@ class RegisterView(QWidget):
             self.salary_input.text()
         ]
 
-        # Sends the employee data to RegisterController.
-        # The View does not decide what to do with the data;
-        # it only collects and emits it.
-        self.register_employee_signal.emit(employee)
+        # Send data to controller.
+        self.register_employee_signal.emit(
+            employee
+        )
+
+    def clear_form(self):
+
+        # Clear all input fields.
+        self.id_input.clear()
+        self.name_input.clear()
+        self.email_input.clear()
+        self.phone_input.clear()
+        self.salary_input.clear()
+
+        # Reset department dropdown.
+        self.department_combo.setCurrentIndex(0)
+
+        # Clear error message.
+        self.clear_error()
+
+    def show_error(self, message):
+
+        # Display validation error.
+        self.error_label.setText(message)
+
+    def clear_error(self):
+
+        # Remove validation error.
+        self.error_label.setText("")
