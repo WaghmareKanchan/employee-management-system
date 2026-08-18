@@ -1,10 +1,13 @@
+import re
+
 from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
     QLineEdit,
     QComboBox,
     QPushButton,
-    QVBoxLayout
+    QVBoxLayout,
+    QHBoxLayout
 )
 
 from PyQt5.QtCore import pyqtSignal
@@ -12,72 +15,85 @@ from PyQt5.QtCore import pyqtSignal
 
 class EditEmployeeView(QWidget):
 
-    # Signal used to send the updated employee data
-    # from View to Controller.
+    # Signal used to send updated employee data
+    # from View to EmployeeListController.
     update_employee_signal = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
 
-        # Creates the Edit Employee form.
+        # Creates the Edit Employee UI.
         self.setup_ui()
-
 
     def setup_ui(self):
 
-        # Sets the title of the Edit Employee page.
+        # Sets the page title.
         self.setWindowTitle("Edit Employee")
+
+
+        # ---------------- Title ----------------
+
+        title_label = QLabel("Edit Employee")
+
+        # Used by QSS for title styling.
+        title_label.setObjectName(
+            "titleLabel"
+        )
 
 
         # ---------------- Employee ID ----------------
 
-        # Label for Employee ID.
         id_label = QLabel("Employee ID")
 
-        # Employee ID input field.
         self.id_input = QLineEdit()
 
-        # Employee ID should not normally be changed,
-        # so it can be made read-only.
+        # Employee ID should not be changed.
         self.id_input.setReadOnly(True)
+
+        self.id_input.setPlaceholderText(
+            "Employee ID"
+        )
 
 
         # ---------------- Name ----------------
 
-        # Label for employee name.
         name_label = QLabel("Name")
 
-        # Input field for employee name.
         self.name_input = QLineEdit()
+
+        self.name_input.setPlaceholderText(
+            "Enter employee name"
+        )
 
 
         # ---------------- Email ----------------
 
-        # Label for employee email.
         email_label = QLabel("Email")
 
-        # Input field for employee email.
         self.email_input = QLineEdit()
+
+        self.email_input.setPlaceholderText(
+            "Enter email address"
+        )
 
 
         # ---------------- Phone ----------------
 
-        # Label for employee phone.
         phone_label = QLabel("Phone")
 
-        # Input field for employee phone.
         self.phone_input = QLineEdit()
+
+        self.phone_input.setPlaceholderText(
+            "Enter 10 digit phone number"
+        )
 
 
         # ---------------- Department ----------------
 
-        # Label for employee department.
         department_label = QLabel("Department")
 
-        # Dropdown for selecting department.
         self.department_combo = QComboBox()
 
-        # Adds available department options.
         self.department_combo.addItems([
             "IT",
             "HR",
@@ -88,100 +104,443 @@ class EditEmployeeView(QWidget):
 
         # ---------------- Salary ----------------
 
-        # Label for employee salary.
         salary_label = QLabel("Salary")
 
-        # Input field for employee salary.
         self.salary_input = QLineEdit()
 
+        self.salary_input.setPlaceholderText(
+            "Enter salary"
+        )
 
-        # ---------------- Update Button ----------------
 
-        # Creates the Update button.
-        self.update_button = QPushButton("Update")
+        # ---------------- Error Label ----------------
 
-        # Calls update_employee() when the button is clicked.
+        self.error_label = QLabel("")
+
+        self.error_label.setObjectName(
+            "errorLabel"
+        )
+
+
+        # ---------------- Buttons ----------------
+
+        self.update_button = QPushButton(
+            "Update"
+        )
+
+        self.update_button.setObjectName(
+            "updateButton"
+        )
+
+
+        self.clear_button = QPushButton(
+            "Clear"
+        )
+
+        self.clear_button.setObjectName(
+            "clearButton"
+        )
+
+
+        # Connect Update button.
         self.update_button.clicked.connect(
             self.update_employee
         )
 
 
-        # ---------------- Layout ----------------
+        # Connect Clear button.
+        self.clear_button.clicked.connect(
+            self.clear_form
+        )
 
-        # Creates a vertical layout for the edit form.
+
+        # ---------------- Field List ----------------
+
+        # Stores label + input pairs.
+        #
+        # All fields have the same layout:
+        #
+        # Label
+        # Input
+        #
+        # So we can use a for loop.
+        fields = [
+            (id_label, self.id_input),
+            (name_label, self.name_input),
+            (email_label, self.email_input),
+            (phone_label, self.phone_input),
+            (department_label, self.department_combo),
+            (salary_label, self.salary_input)
+        ]
+
+
+        # ---------------- Main Layout ----------------
+
         layout = QVBoxLayout()
 
-        # Adds Employee ID field.
-        layout.addWidget(id_label)
-        layout.addWidget(self.id_input)
 
-        # Adds Name field.
-        layout.addWidget(name_label)
-        layout.addWidget(self.name_input)
+        # Adds space around the form.
+        layout.setContentsMargins(
+            80,
+            40,
+            80,
+            40
+        )
 
-        # Adds Email field.
-        layout.addWidget(email_label)
-        layout.addWidget(self.email_input)
 
-        # Adds Phone field.
-        layout.addWidget(phone_label)
-        layout.addWidget(self.phone_input)
+        # Space between widgets.
+        layout.setSpacing(10)
 
-        # Adds Department field.
-        layout.addWidget(department_label)
-        layout.addWidget(self.department_combo)
 
-        # Adds Salary field.
-        layout.addWidget(salary_label)
-        layout.addWidget(self.salary_input)
+        # Adds title.
+        layout.addWidget(
+            title_label
+        )
 
-        # Adds Update button.
-        layout.addWidget(self.update_button)
+        layout.addSpacing(15)
 
-        # Applies the layout to the EditEmployeeView.
-        self.setLayout(layout)
+
+        # Adds all label + input pairs.
+        for label, field in fields:
+
+            layout.addWidget(label)
+            layout.addWidget(field)
+
+
+        # Adds small space before error.
+        layout.addSpacing(5)
+
+
+        # Adds error message label.
+        layout.addWidget(
+            self.error_label
+        )
+
+
+        # Adds space before buttons.
+        layout.addSpacing(10)
+
+
+        # ---------------- Button Layout ----------------
+
+        button_layout = QHBoxLayout()
+
+        button_layout.setSpacing(10)
+
+        button_layout.addWidget(
+            self.update_button
+        )
+
+        button_layout.addWidget(
+            self.clear_button
+        )
+
+
+        # Adds button layout to main layout.
+        layout.addLayout(
+            button_layout
+        )
+
+
+        # Applies main layout.
+        self.setLayout(
+            layout
+        )
+
+
+        # ---------------- QSS Styling ----------------
+
+        self.setStyleSheet("""
+
+        QWidget {
+            background-color: #f5f7fa;
+            font-size: 14px;
+        }
+
+
+        #titleLabel {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            padding-bottom: 5px;
+        }
+
+
+        QLineEdit,
+        QComboBox {
+
+            background-color: white;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 6px;
+
+            padding: 9px;
+        }
+
+
+        QLineEdit:focus,
+        QComboBox:focus {
+
+            border: 2px solid #2563eb;
+        }
+
+
+        QLineEdit:read-only {
+
+            background-color: #e5e7eb;
+
+            color: #6b7280;
+        }
+
+
+        #updateButton {
+
+            background-color: #2563eb;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            padding: 10px;
+
+            font-weight: bold;
+        }
+
+
+        #updateButton:hover {
+
+            background-color: #1d4ed8;
+        }
+
+
+        #clearButton {
+
+            background-color: #e5e7eb;
+
+            color: #374151;
+
+            border: none;
+
+            border-radius: 6px;
+
+            padding: 10px;
+
+            font-weight: bold;
+        }
+
+
+        #clearButton:hover {
+
+            background-color: #d1d5db;
+        }
+
+
+        #errorLabel {
+
+            color: #dc2626;
+
+            font-weight: bold;
+        }
+
+        """)
 
 
     def set_employee_data(self, employee):
 
-        # Stores the employee that is being edited.
+        # Stores employee currently being edited.
         self.employee = employee
 
 
-        # Displays the existing Employee ID.
-        self.id_input.setText(employee[0])
+        # Employee ID.
+        self.id_input.setText(
+            employee[0]
+        )
 
-        # Displays the existing name.
-        self.name_input.setText(employee[1])
 
-        # Displays the existing email.
-        self.email_input.setText(employee[2])
+        # Employee name.
+        self.name_input.setText(
+            employee[1]
+        )
 
-        # Displays the existing phone number.
-        self.phone_input.setText(employee[3])
 
-        # Selects the existing department in the dropdown.
-        index = self.department_combo.findText(employee[4])
+        # Employee email.
+        self.email_input.setText(
+            employee[2]
+        )
 
+
+        # Employee phone.
+        self.phone_input.setText(
+            employee[3]
+        )
+
+
+        # Finds existing department.
+        index = self.department_combo.findText(
+            employee[4]
+        )
+
+
+        # Selects department if found.
         if index >= 0:
-            self.department_combo.setCurrentIndex(index)
 
-        # Displays the existing salary.
-        self.salary_input.setText(employee[5])
+            self.department_combo.setCurrentIndex(
+                index
+            )
+
+
+        # Employee salary.
+        self.salary_input.setText(
+            employee[5]
+        )
+
+
+        # Removes any previous error.
+        self.clear_error()
 
 
     def update_employee(self):
 
-        # Collects the updated values entered by the user.
+        # Collects updated employee data.
         employee = [
-            self.id_input.text(),
-            self.name_input.text(),
-            self.email_input.text(),
-            self.phone_input.text(),
+            self.id_input.text().strip(),
+            self.name_input.text().strip(),
+            self.email_input.text().strip(),
+            self.phone_input.text().strip(),
             self.department_combo.currentText(),
-            self.salary_input.text()
+            self.salary_input.text().strip()
         ]
 
-        # Sends the updated employee data
-        # to EmployeeListController.
-        self.update_employee_signal.emit(employee)
+
+        # ---------------- Required Field Validation ----------------
+
+        required_fields = [
+            ("Name", employee[1]),
+            ("Email", employee[2]),
+            ("Phone", employee[3]),
+            ("Salary", employee[5])
+        ]
+
+
+        # Checks all required fields.
+        for field_name, value in required_fields:
+
+            if not value:
+
+                self.show_error(
+                    f"{field_name} is required."
+                )
+
+                return
+
+
+        # ---------------- Name Validation ----------------
+
+        if not re.fullmatch(
+            r"[A-Za-z ]+",
+            employee[1]
+        ):
+
+            self.show_error(
+                "Name should contain only letters."
+            )
+
+            return
+
+
+        # ---------------- Email Validation ----------------
+
+        email_pattern = (
+            r"^[\w\.-]+@[\w\.-]+\.\w+$"
+        )
+
+
+        if not re.fullmatch(
+            email_pattern,
+            employee[2]
+        ):
+
+            self.show_error(
+                "Please enter a valid email address."
+            )
+
+            return
+
+
+        # ---------------- Phone Validation ----------------
+
+        if not employee[3].isdigit():
+
+            self.show_error(
+                "Phone number should contain only digits."
+            )
+
+            return
+
+
+        if len(employee[3]) != 10:
+
+            self.show_error(
+                "Phone number must contain exactly 10 digits."
+            )
+
+            return
+
+
+        # ---------------- Salary Validation ----------------
+
+        if not employee[5].isdigit():
+
+            self.show_error(
+                "Salary should contain only numbers."
+            )
+
+            return
+
+
+        # ---------------- Send Updated Data ----------------
+
+        self.update_employee_signal.emit(
+            employee
+        )
+
+
+    def clear_form(self):
+
+        # Employee ID is not cleared
+        # because it is read-only.
+
+        self.name_input.clear()
+
+        self.email_input.clear()
+
+        self.phone_input.clear()
+
+        self.salary_input.clear()
+
+
+        # Resets department.
+        self.department_combo.setCurrentIndex(
+            0
+        )
+
+
+        # Removes error message.
+        self.clear_error()
+
+
+    def show_error(self, message):
+
+        # Displays validation error.
+        self.error_label.setText(
+            message
+        )
+
+
+    def clear_error(self):
+
+        # Removes validation error.
+        self.error_label.setText("")
