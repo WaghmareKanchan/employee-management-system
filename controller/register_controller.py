@@ -1,3 +1,5 @@
+import re 
+
 class RegisterController:
     
     def __init__(self,view, employee_list_view, main_view):
@@ -32,6 +34,76 @@ class RegisterController:
         
     def register_employee(self,employee):
         
+        #Gets employee data from the list 
+        employee_id = employee[0].strip()
+        name = employee[1].strip()
+        email = employee[2].strip()
+        phone = employee[3].strip()
+        department = employee[4].strip()
+        salary = employee[5].strip()
+        
+        
+        required_fields = [
+            ("Employee ID", employee_id),
+            ("Name", name),
+            ("Email", email),
+            ("Phone", phone),
+            ("Salary", salary)
+        ]
+
+        for field_name, value in required_fields:
+
+            if not value:
+                self.view.show_error(
+                    f"{field_name} is required."
+                )
+                return
+
+
+        if not re.fullmatch(r"[A-Za-z ]+", name):
+            self.view.show_error(
+                "Name should contain only letters."
+            )
+            return
+
+
+        email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+
+        if not re.fullmatch(email_pattern, email):
+            self.view.show_error(
+                "Please enter a valid email address."
+            )
+            return
+
+
+        if not phone.isdigit():
+            self.view.show_error(
+                "Phone number should contain only digits."
+            )
+            return
+
+
+        if len(phone) != 10:
+            self.view.show_error(
+                "Phone number must contain exactly 10 digits."
+            )
+            return
+        
+        
+        if not value or value == "Select Department":
+            self.view.show_error(
+                f"{field_name} is required."
+            )
+            return
+
+
+        if not salary.isdigit():
+            self.view.show_error(
+                "Salary should contain only numbers."
+            )
+            return
+                
+        
         # Prints the received employee data in the terminal.
         # This was useful while testing the signal connection.
         print("Register clicked")
@@ -46,6 +118,6 @@ class RegisterController:
         
         # After registration, switches the right-side page
         # from RegisterView to EmployeeListView.
-        self.main_view.stack.setCurrentWidget(
-            self.employee_list_view
-        )
+        # self.main_view.stack.setCurrentWidget(
+        #     self.employee_list_view
+        # ) 
