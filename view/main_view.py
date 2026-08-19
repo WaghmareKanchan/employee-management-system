@@ -4,9 +4,10 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QStackedWidget,
-    QLabel,
     QFrame
 )
+
+from PyQt5.QtCore import Qt
 
 from view.register_view import RegisterView
 from view.employee_list_view import EmployeeListView
@@ -19,7 +20,7 @@ class MainView(QWidget):
     def __init__(self):
         super().__init__()
 
-        # Creates and arranges the complete GUI.
+        # Creates the main application window.
         self.setup_ui()
 
 
@@ -32,66 +33,19 @@ class MainView(QWidget):
         )
 
         self.resize(
-            1100,
-            650
+            1000,
+            600
         )
 
 
-        # ---------------- Sidebar ----------------
-
-        self.sidebar = QFrame()
-
-        # Object name is used by QSS.
-        self.sidebar.setObjectName(
-            "sidebar"
-        )
-
-        # Fixed width for sidebar.
-        self.sidebar.setFixedWidth(
-            230
-        )
-
-
-        # ---------------- Application Title ----------------
-
-        self.app_title = QLabel(
-            "Employee\nManagement System"
-        )
-
-        self.app_title.setObjectName(
-            "appTitle"
-        )
-
-
-        # ---------------- Register Button ----------------
+        # ---------------- Sidebar Buttons ----------------
 
         self.register_button = QPushButton(
             "Register Employee"
         )
 
-        self.register_button.setObjectName(
-            "sidebarButton"
-        )
-
-        # Allows active button styling.
-        self.register_button.setCheckable(
-            True
-        )
-
-
-        # ---------------- Employee List Button ----------------
-
         self.employee_list_button = QPushButton(
             "Employee List"
-        )
-
-        self.employee_list_button.setObjectName(
-            "sidebarButton"
-        )
-
-        # Allows active button styling.
-        self.employee_list_button.setCheckable(
-            True
         )
 
 
@@ -99,51 +53,40 @@ class MainView(QWidget):
 
         self.sidebar_layout = QVBoxLayout()
 
-        # Space around sidebar content.
         self.sidebar_layout.setContentsMargins(
-            20,
-            30,
-            20,
-            30
-        )
-
-        # Space between widgets.
-        self.sidebar_layout.setSpacing(
-            12
-        )
-
-
-        # Adds application title.
-        self.sidebar_layout.addWidget(
-            self.app_title
-        )
-
-        # Space after title.
-        self.sidebar_layout.addSpacing(
+            15,
+            25,
+            15,
             25
         )
 
+        self.sidebar_layout.setSpacing(
+            10
+        )
 
-        # Stores sidebar buttons in a list.
-        sidebar_buttons = [
-            self.register_button,
+
+        # Adds buttons to sidebar.
+
+        self.sidebar_layout.addWidget(
+            self.register_button
+        )
+
+        self.sidebar_layout.addWidget(
             self.employee_list_button
-        ]
+        )
 
-
-        # Adds all sidebar buttons using for loop.
-        for button in sidebar_buttons:
-
-            self.sidebar_layout.addWidget(
-                button
-            )
-
-
-        # Pushes buttons towards the top.
+        # Empty space below buttons.
         self.sidebar_layout.addStretch()
 
 
-        # Applies layout to sidebar.
+        # ---------------- Sidebar Widget ----------------
+
+        self.sidebar = QFrame()
+
+        self.sidebar.setObjectName(
+            "sidebar"
+        )
+
         self.sidebar.setLayout(
             self.sidebar_layout
         )
@@ -153,14 +96,12 @@ class MainView(QWidget):
 
         self.stack = QStackedWidget()
 
-        self.stack.setObjectName(
-            "contentArea"
-        )
 
-
-        # ---------------- Pages ----------------
-
+        # Empty page.
         self.empty_page = QWidget()
+
+
+        # ---------------- Application Views ----------------
 
         self.register_view = RegisterView()
 
@@ -173,28 +114,62 @@ class MainView(QWidget):
 
         # ---------------- Add Pages ----------------
 
-        pages = [
-            self.empty_page,
-            self.register_view,
-            self.employee_list_view,
-            self.employee_detail_view,
+        self.stack.addWidget(
+            self.empty_page
+        )
+
+        self.stack.addWidget(
+            self.register_view
+        )
+
+        self.stack.addWidget(
+            self.employee_list_view
+        )
+
+        self.stack.addWidget(
+            self.employee_detail_view
+        )
+
+        self.stack.addWidget(
             self.edit_employee_view
-        ]
+        )
 
 
-        # Adds all pages using for loop.
-        for page in pages:
+        # ---------------- Main Content ----------------
 
-            self.stack.addWidget(
-                page
-            )
+        # Container for the stacked widget.
+        self.content_frame = QFrame()
+
+        self.content_frame.setObjectName(
+            "contentFrame"
+        )
+
+
+        # Content layout.
+        content_layout = QVBoxLayout()
+
+        content_layout.setContentsMargins(
+            20,
+            20,
+            20,
+            20
+        )
+
+
+        # Adds stack to content area.
+        content_layout.addWidget(
+            self.stack
+        )
+
+        self.content_frame.setLayout(
+            content_layout
+        )
 
 
         # ---------------- Main Layout ----------------
 
         main_layout = QHBoxLayout()
 
-        # Removes extra outer spacing.
         main_layout.setContentsMargins(
             0,
             0,
@@ -202,7 +177,6 @@ class MainView(QWidget):
             0
         )
 
-        # Removes gap between sidebar and content.
         main_layout.setSpacing(
             0
         )
@@ -214,9 +188,15 @@ class MainView(QWidget):
         )
 
 
-        # Content area on right.
+        # Content on right.
         main_layout.addWidget(
-            self.stack
+            self.content_frame
+        )
+
+
+        # Sidebar width.
+        self.sidebar.setFixedWidth(
+            210
         )
 
 
@@ -230,10 +210,11 @@ class MainView(QWidget):
 
         self.setStyleSheet("""
 
+        /* Main Window */
+
         QWidget {
-
+            background-color: #f5f7fa;
             font-family: Arial;
-
             font-size: 14px;
         }
 
@@ -241,76 +222,41 @@ class MainView(QWidget):
         /* Sidebar */
 
         #sidebar {
-
-            background-color: #1e293b;
-
-            border: none;
-        }
-
-
-        /* Application Title */
-
-        #appTitle {
-
-            color: white;
-
-            font-size: 20px;
-
-            font-weight: bold;
+            background-color: #1f2937;
         }
 
 
         /* Sidebar Buttons */
 
-        #sidebarButton {
-
-            background-color: transparent;
-
-            color: #cbd5e1;
-
+        #sidebar QPushButton {
+            background-color: #374151;
+            color: white;
             border: none;
+            border-radius: 6px;
 
-            border-radius: 7px;
+            padding: 12px;
 
-            padding: 13px;
+            font-size: 14px;
+            font-weight: bold;
 
             text-align: left;
-
-            font-size: 15px;
-
-            font-weight: 500;
         }
 
 
-        /* Hover */
-
-        #sidebarButton:hover {
-
-            background-color: #334155;
-
-            color: white;
+        #sidebar QPushButton:hover {
+            background-color: #4b5563;
         }
 
 
-        /* Active Button */
-
-        #sidebarButton:checked {
-
+        #sidebar QPushButton:pressed {
             background-color: #2563eb;
-
-            color: white;
-
-            font-weight: bold;
         }
 
 
-        /* Content Area */
+        /* Main Content */
 
-        #contentArea {
-
+        #contentFrame {
             background-color: #f5f7fa;
-
-            border: none;
         }
 
         """)
