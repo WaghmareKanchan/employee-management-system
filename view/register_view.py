@@ -7,10 +7,11 @@ from PyQt5.QtWidgets import (
     QComboBox,
     QPushButton,
     QVBoxLayout,
-    QHBoxLayout
+    QHBoxLayout,
+    QFrame
 )
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 
 
 class RegisterView(QWidget):
@@ -21,17 +22,53 @@ class RegisterView(QWidget):
     def __init__(self):
         super().__init__()
 
-        # Creates the registration form.
         self.setup_ui()
-
 
     def setup_ui(self):
 
-        # Sets the window title.
+        # ---------------- Window ----------------
+
         self.setWindowTitle(
             "Register Employee"
         )
 
+        # ---------------- Main Layout ----------------
+
+        main_layout = QVBoxLayout()
+
+        main_layout.setContentsMargins(
+            0,
+            20,
+            0,
+            20
+        )
+
+        # ---------------- Card ----------------
+
+        card = QFrame()
+
+        card.setObjectName(
+            "registerCard"
+        )
+
+        card.setFixedWidth(
+            500
+        )
+
+        # ---------------- Card Layout ----------------
+
+        form_layout = QVBoxLayout()
+
+        form_layout.setContentsMargins(
+            35,
+            30,
+            35,
+            30
+        )
+
+        form_layout.setSpacing(
+            12
+        )
 
         # ---------------- Title ----------------
 
@@ -43,8 +80,21 @@ class RegisterView(QWidget):
             "titleLabel"
         )
 
+        title_label.setAlignment(
+            Qt.AlignCenter
+        )
 
-        # ---------------- Employee ID ----------------
+        form_layout.addWidget(
+            title_label
+        )
+
+        form_layout.addSpacing(
+            15
+        )
+
+        # ==================================================
+        # EMPLOYEE ID
+        # ==================================================
 
         id_label = QLabel(
             "Employee ID"
@@ -56,8 +106,15 @@ class RegisterView(QWidget):
             "Enter employee ID"
         )
 
+        self.add_field(
+            form_layout,
+            id_label,
+            self.id_input
+        )
 
-        # ---------------- Name ----------------
+        # ==================================================
+        # NAME
+        # ==================================================
 
         name_label = QLabel(
             "Name"
@@ -69,8 +126,15 @@ class RegisterView(QWidget):
             "Enter employee name"
         )
 
+        self.add_field(
+            form_layout,
+            name_label,
+            self.name_input
+        )
 
-        # ---------------- Email ----------------
+        # ==================================================
+        # EMAIL
+        # ==================================================
 
         email_label = QLabel(
             "Email"
@@ -82,8 +146,15 @@ class RegisterView(QWidget):
             "Enter email address"
         )
 
+        self.add_field(
+            form_layout,
+            email_label,
+            self.email_input
+        )
 
-        # ---------------- Phone ----------------
+        # ==================================================
+        # PHONE
+        # ==================================================
 
         phone_label = QLabel(
             "Phone"
@@ -95,8 +166,15 @@ class RegisterView(QWidget):
             "Enter 10 digit phone number"
         )
 
+        self.add_field(
+            form_layout,
+            phone_label,
+            self.phone_input
+        )
 
-        # ---------------- Department ----------------
+        # ==================================================
+        # DEPARTMENT
+        # ==================================================
 
         department_label = QLabel(
             "Department"
@@ -111,8 +189,15 @@ class RegisterView(QWidget):
             "Marketing"
         ])
 
+        self.add_field(
+            form_layout,
+            department_label,
+            self.department_combo
+        )
 
-        # ---------------- Salary ----------------
+        # ==================================================
+        # SALARY
+        # ==================================================
 
         salary_label = QLabel(
             "Salary"
@@ -124,17 +209,37 @@ class RegisterView(QWidget):
             "Enter salary"
         )
 
+        self.add_field(
+            form_layout,
+            salary_label,
+            self.salary_input
+        )
 
-        # ---------------- Error Message ----------------
+        # ==================================================
+        # ERROR MESSAGE
+        # ==================================================
 
-        self.error_label = QLabel("")
+        self.error_label = QLabel(
+            ""
+        )
 
         self.error_label.setObjectName(
             "errorLabel"
         )
 
+        form_layout.addWidget(
+            self.error_label
+        )
 
-        # ---------------- Buttons ----------------
+        # ==================================================
+        # BUTTONS
+        # ==================================================
+
+        button_layout = QHBoxLayout()
+
+        button_layout.setSpacing(
+            10
+        )
 
         self.register_button = QPushButton(
             "Register"
@@ -144,7 +249,6 @@ class RegisterView(QWidget):
             "registerButton"
         )
 
-
         self.clear_button = QPushButton(
             "Clear"
         )
@@ -152,93 +256,6 @@ class RegisterView(QWidget):
         self.clear_button.setObjectName(
             "clearButton"
         )
-
-
-        # Connects Register button.
-        self.register_button.clicked.connect(
-            self.register_employee
-        )
-
-
-        # Connects Clear button.
-        self.clear_button.clicked.connect(
-            self.clear_form
-        )
-
-
-        # ---------------- Form Fields ----------------
-
-        fields = [
-            (id_label, self.id_input),
-            (name_label, self.name_input),
-            (email_label, self.email_input),
-            (phone_label, self.phone_input),
-            (department_label, self.department_combo),
-            (salary_label, self.salary_input)
-        ]
-
-
-        # ---------------- Main Layout ----------------
-
-        layout = QVBoxLayout()
-
-        # Outer spacing.
-        layout.setContentsMargins(
-            80,
-            40,
-            80,
-            40
-        )
-
-        # Space between widgets.
-        layout.setSpacing(
-            10
-        )
-
-
-        # Adds title.
-        layout.addWidget(
-            title_label
-        )
-
-        layout.addSpacing(
-            15
-        )
-
-
-        # Adds all form fields.
-        #
-        # Same operation is repeated,
-        # so for loop is suitable here.
-        for label, field in fields:
-
-            layout.addWidget(
-                label
-            )
-
-            layout.addWidget(
-                field
-            )
-
-
-        # Adds error message.
-        layout.addWidget(
-            self.error_label
-        )
-
-        layout.addSpacing(
-            10
-        )
-
-
-        # ---------------- Button Layout ----------------
-
-        button_layout = QHBoxLayout()
-
-        button_layout.setSpacing(
-            10
-        )
-
 
         button_layout.addWidget(
             self.register_button
@@ -248,19 +265,55 @@ class RegisterView(QWidget):
             self.clear_button
         )
 
-
-        layout.addLayout(
+        form_layout.addLayout(
             button_layout
         )
 
+        # ---------------- Card Layout ----------------
 
-        # Applies layout.
-        self.setLayout(
-            layout
+        card.setLayout(
+            form_layout
         )
 
+        # ---------------- Center Card ----------------
 
-        # ---------------- QSS ----------------
+        main_layout.addStretch()
+
+        card_layout = QHBoxLayout()
+
+        card_layout.addStretch()
+
+        card_layout.addWidget(
+            card
+        )
+
+        card_layout.addStretch()
+
+        main_layout.addLayout(
+            card_layout
+        )
+
+        main_layout.addStretch()
+
+        self.setLayout(
+            main_layout
+        )
+
+        # ==================================================
+        # SIGNALS
+        # ==================================================
+
+        self.register_button.clicked.connect(
+            self.register_employee
+        )
+
+        self.clear_button.clicked.connect(
+            self.clear_form
+        )
+
+        # ==================================================
+        # QSS
+        # ==================================================
 
         self.setStyleSheet("""
 
@@ -268,14 +321,24 @@ class RegisterView(QWidget):
             background-color: #f5f7fa;
             font-family: Arial;
             font-size: 14px;
-            
         }
 
+        /* ---------------- Card ---------------- */
+
+        #registerCard {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        /* ---------------- Labels ---------------- */
+
         QLabel {
-            color: #333333;
+            color: #374151;
             font-weight: bold;
         }
 
+        /* ---------------- Title ---------------- */
 
         #titleLabel {
             font-size: 24px;
@@ -283,22 +346,23 @@ class RegisterView(QWidget):
             color: #1f2937;
         }
 
+        /* ---------------- Inputs ---------------- */
 
         QLineEdit,
         QComboBox {
             background-color: white;
             border: 1px solid #d1d5db;
             border-radius: 6px;
-            padding: 9px;
-            min-height: 18px;
+            padding: 7px 8px;
+            min-height: 16px;
         }
-
 
         QLineEdit:focus,
         QComboBox:focus {
             border: 2px solid #2563eb;
         }
 
+        /* ---------------- Register Button ---------------- */
 
         #registerButton {
             background-color: #2563eb;
@@ -309,11 +373,11 @@ class RegisterView(QWidget):
             font-weight: bold;
         }
 
-
         #registerButton:hover {
             background-color: #1d4ed8;
         }
 
+        /* ---------------- Clear Button ---------------- */
 
         #clearButton {
             background-color: #e5e7eb;
@@ -324,11 +388,11 @@ class RegisterView(QWidget):
             font-weight: bold;
         }
 
-
         #clearButton:hover {
             background-color: #d1d5db;
         }
 
+        /* ---------------- Error ---------------- */
 
         #errorLabel {
             color: #dc2626;
@@ -337,10 +401,54 @@ class RegisterView(QWidget):
 
         """)
 
+    # ==================================================
+    # ADD FIELD
+    # ==================================================
+
+    def add_field(
+        self,
+        layout,
+        label,
+        field
+    ):
+
+        row_layout = QHBoxLayout()
+
+        row_layout.setSpacing(
+            15
+        )
+
+        # Fixed label width
+        label.setFixedWidth(
+            100
+        )
+
+        # Input width
+        field.setFixedWidth(
+            280
+        )
+
+        # Label
+        row_layout.addWidget(
+            label
+        )
+
+        # Input
+        row_layout.addWidget(
+            field
+        )
+
+        # Add row
+        layout.addLayout(
+            row_layout
+        )
+
+    # ==================================================
+    # REGISTER EMPLOYEE
+    # ==================================================
 
     def register_employee(self):
 
-        # Collects all form data.
         employee = [
             self.id_input.text().strip(),
             self.name_input.text().strip(),
@@ -349,7 +457,6 @@ class RegisterView(QWidget):
             self.department_combo.currentText(),
             self.salary_input.text().strip()
         ]
-
 
         # ---------------- Required Fields ----------------
 
@@ -361,8 +468,6 @@ class RegisterView(QWidget):
             ("Salary", employee[5])
         ]
 
-
-        # Checks all required fields.
         for field_name, value in required_fields:
 
             if not value:
@@ -373,8 +478,7 @@ class RegisterView(QWidget):
 
                 return
 
-
-        # ---------------- Employee ID Validation ----------------
+        # ---------------- Employee ID ----------------
 
         if not employee[0].isdigit():
 
@@ -384,8 +488,7 @@ class RegisterView(QWidget):
 
             return
 
-
-        # ---------------- Name Validation ----------------
+        # ---------------- Name ----------------
 
         if not re.fullmatch(
             r"[A-Za-z ]+",
@@ -398,8 +501,7 @@ class RegisterView(QWidget):
 
             return
 
-
-        # ---------------- Email Validation ----------------
+        # ---------------- Email ----------------
 
         email_pattern = (
             r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -416,8 +518,7 @@ class RegisterView(QWidget):
 
             return
 
-
-        # ---------------- Phone Validation ----------------
+        # ---------------- Phone ----------------
 
         if not employee[3].isdigit():
 
@@ -427,7 +528,6 @@ class RegisterView(QWidget):
 
             return
 
-
         if len(employee[3]) != 10:
 
             self.show_error(
@@ -436,8 +536,7 @@ class RegisterView(QWidget):
 
             return
 
-
-        # ---------------- Salary Validation ----------------
+        # ---------------- Salary ----------------
 
         if not employee[5].isdigit():
 
@@ -447,23 +546,21 @@ class RegisterView(QWidget):
 
             return
 
+        # ---------------- Send Data ----------------
 
-        # ---------------- Successful Registration ----------------
-
-        # Sends valid employee data to Controller.
         self.register_employee_signal.emit(
             employee
         )
 
-
-        # Immediately clears the form
-        # after successful registration.
+        # Clear form
         self.clear_form()
 
+    # ==================================================
+    # CLEAR FORM
+    # ==================================================
 
     def clear_form(self):
 
-        # Stores all QLineEdit fields.
         fields = [
             self.id_input,
             self.name_input,
@@ -472,33 +569,28 @@ class RegisterView(QWidget):
             self.salary_input
         ]
 
-
-        # Same clear operation for all fields,
-        # so for loop is suitable here.
         for field in fields:
 
             field.clear()
 
-
-        # Resets department.
         self.department_combo.setCurrentIndex(
             0
         )
 
-
-        # Clears error message.
         self.clear_error()
 
+    # ==================================================
+    # ERROR
+    # ==================================================
 
     def show_error(self, message):
 
-        # Displays validation error.
         self.error_label.setText(
             message
         )
 
-
     def clear_error(self):
 
-        # Clears error message.
-        self.error_label.setText("")
+        self.error_label.setText(
+            ""
+        )
