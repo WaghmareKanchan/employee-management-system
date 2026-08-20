@@ -1,4 +1,5 @@
 import re 
+import json 
 
 class RegisterController:
     
@@ -22,6 +23,10 @@ class RegisterController:
         self.main_view = main_view
         
         
+        self.main_dict = {}
+        self.count = 0
+        
+        
         # Connects the RegisterView signal to the controller method.
         #
         # When the user clicks the Register button,
@@ -43,6 +48,7 @@ class RegisterController:
         salary = employee[5].strip()
         
         
+        #check user take empty field 
         required_fields = [
             ("Employee ID", employee_id),
             ("Name", name),
@@ -90,7 +96,7 @@ class RegisterController:
             return
         
         
-        if not value or value == "Select Department":
+        if not department or department == "Select Department":
             self.view.show_error(
                 f"{field_name} is required."
             )
@@ -102,6 +108,32 @@ class RegisterController:
                 "Salary should contain only numbers."
             )
             return
+        
+        
+        #Duplicate ID check
+        for key in self.main_dict:
+            if self.main_dict[key]["Employee ID"] == employee_id:
+                self.view.show_error("Employee ID already exists.")
+                return 
+            
+        self.count += 1
+            
+            
+        #Sub dictionary
+        employee_dict = {
+                "Employee ID": employee_id,
+                "Name": name,
+                "Email": email, 
+                "Phone": phone,
+                "Department": department ,
+                "Salary": salary
+            }
+            
+        self.main_dict["Employee " + str(self.count)] = employee_dict 
+            
+            
+        #print on colsole "dumps - > means print on console , s means string "  and "dump - > python dictionary convert in json "
+        print(json.dumps(self.main_dict, indent=2))
                 
         
         # Prints the received employee data in the terminal.
