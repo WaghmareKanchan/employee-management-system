@@ -3,7 +3,7 @@ import json
 
 class RegisterController:
     
-    def __init__(self,view, employee_list_view, main_view):
+    def __init__(self,view, employee_list_view, main_view,main_dict):
         
         # Stores the RegisterView object.
         # This gives the controller access to the Register GUI
@@ -22,10 +22,8 @@ class RegisterController:
         # to Employee List page.
         self.main_view = main_view
         
-        
-        self.main_dict = {}
         self.count = 0
-        
+        self.main_dict = main_dict
         
         # Connects the RegisterView signal to the controller method.
         #
@@ -40,17 +38,15 @@ class RegisterController:
     def register_employee(self,employee):
         
         #Gets employee data from the list 
-        employee_id = employee[0].strip()
-        name = employee[1].strip()
-        email = employee[2].strip()
-        phone = employee[3].strip()
-        department = employee[4].strip()
-        salary = employee[5].strip()
+        name = employee[0].strip()
+        email = employee[1].strip()
+        phone = employee[2].strip()
+        department = employee[3].strip()
+        salary = employee[4].strip()
         
         
         #check user take empty field 
         required_fields = [
-            ("Employee ID", employee_id),
             ("Name", name),
             ("Email", email),
             ("Phone", phone),
@@ -96,7 +92,7 @@ class RegisterController:
             return
         
         
-        if not department or department == "Select Department":
+        if department == "Select Department":
             self.view.show_error(
                 f"{field_name} is required."
             )
@@ -109,19 +105,14 @@ class RegisterController:
             )
             return
         
-        
-        #Duplicate ID check
-        for key in self.main_dict:
-            if self.main_dict[key]["Employee ID"] == employee_id:
-                self.view.show_error("Employee ID already exists.")
-                return 
             
         self.count += 1
+        new_employee_id = self.count 
             
             
         #Sub dictionary
         employee_dict = {
-                "Employee ID": employee_id,
+                "Employee ID": new_employee_id,
                 "Name": name,
                 "Email": email, 
                 "Phone": phone,
@@ -129,8 +120,24 @@ class RegisterController:
                 "Salary": salary
             }
             
-        self.main_dict["Employee " + str(self.count)] = employee_dict 
+        key = "Employee " + str(self.count)
+      
+        new_main_dict = {}
+        
+        new_main_dict[key] = employee_dict
+        new_main_dict.update(self.main_dict)
             
+        self.main_dict.clear()
+        self.main_dict.update(new_main_dict)
+        
+        employee_for_table = [
+            str(new_employee_id),
+            name,
+            email,
+            phone,
+            department,
+            salary
+        ]
             
         #print on colsole "dumps - > means print on console , s means string "  and "dump - > python dictionary convert in json "
         print(json.dumps(self.main_dict, indent=2))
@@ -139,17 +146,13 @@ class RegisterController:
         # Prints the received employee data in the terminal.
         # This was useful while testing the signal connection.
         print("Register clicked")
-        print(employee)
+        print(employee_for_table)
         
         
         # Sends the employee data to EmployeeListView.
         # The data entered by the user through the GUI
         # is added as a new row in the employee table.
-        self.employee_list_view.add_employee(employee)
+        self.employee_list_view.add_employee(employee_for_table)
         
         
-        # After registration, switches the right-side page
-        # from RegisterView to EmployeeListView.
-        # self.main_view.stack.setCurrentWidget(
-        #     self.employee_list_view
-        # ) 
+        

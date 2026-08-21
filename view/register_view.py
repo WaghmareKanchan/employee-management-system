@@ -92,26 +92,7 @@ class RegisterView(QWidget):
             15
         )
 
-        # ==================================================
-        # EMPLOYEE ID
-        # ==================================================
-
-        id_label = QLabel(
-            "Employee ID"
-        )
-
-        self.id_input = QLineEdit()
-
-        self.id_input.setPlaceholderText(
-            "Enter employee ID"
-        )
-
-        self.add_field(
-            form_layout,
-            id_label,
-            self.id_input
-        )
-
+        
         # ==================================================
         # NAME
         # ==================================================
@@ -450,7 +431,6 @@ class RegisterView(QWidget):
     def register_employee(self):
 
         employee = [
-            self.id_input.text().strip(),
             self.name_input.text().strip(),
             self.email_input.text().strip(),
             self.phone_input.text().strip(),
@@ -461,11 +441,10 @@ class RegisterView(QWidget):
         # ---------------- Required Fields ----------------
 
         required_fields = [
-            ("Employee ID", employee[0]),
-            ("Name", employee[1]),
-            ("Email", employee[2]),
-            ("Phone", employee[3]),
-            ("Salary", employee[5])
+            ("Name", employee[0]),
+            ("Email", employee[1]),
+            ("Phone", employee[2]),
+            ("Salary", employee[4])
         ]
 
         for field_name, value in required_fields:
@@ -478,21 +457,11 @@ class RegisterView(QWidget):
 
                 return
 
-        # ---------------- Employee ID ----------------
-
-        if not employee[0].isdigit():
-
-            self.show_error(
-                "Employee ID should contain only numbers."
-            )
-
-            return
-
         # ---------------- Name ----------------
 
         if not re.fullmatch(
             r"[A-Za-z ]+",
-            employee[1]
+            employee[0]
         ):
 
             self.show_error(
@@ -509,7 +478,7 @@ class RegisterView(QWidget):
 
         if not re.fullmatch(
             email_pattern,
-            employee[2]
+            employee[1]
         ):
 
             self.show_error(
@@ -520,7 +489,7 @@ class RegisterView(QWidget):
 
         # ---------------- Phone ----------------
 
-        if not employee[3].isdigit():
+        if not employee[2].isdigit():
 
             self.show_error(
                 "Phone number should contain only digits."
@@ -528,7 +497,7 @@ class RegisterView(QWidget):
 
             return
 
-        if len(employee[3]) != 10:
+        if len(employee[2]) != 10:
 
             self.show_error(
                 "Phone number must contain exactly 10 digits."
@@ -538,7 +507,7 @@ class RegisterView(QWidget):
 
         # ---------------- Salary ----------------
 
-        if not employee[5].isdigit():
+        if not employee[4].isdigit():
 
             self.show_error(
                 "Salary should contain only numbers."
@@ -562,7 +531,6 @@ class RegisterView(QWidget):
     def clear_form(self):
 
         fields = [
-            self.id_input,
             self.name_input,
             self.email_input,
             self.phone_input,
