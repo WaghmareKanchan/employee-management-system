@@ -43,7 +43,7 @@ class EmployeeListView(QWidget):
 
         # Column names.
         self.table.setHorizontalHeaderLabels([
-            "ID",
+            "Employee ID",
             "Name",
             "Email",
             "Phone",
@@ -78,7 +78,7 @@ class EmployeeListView(QWidget):
 
         # ---------------- Column Width ----------------
 
-        self.table.setColumnWidth(0, 70)
+        self.table.setColumnWidth(0, 100)
         self.table.setColumnWidth(1, 140)
         self.table.setColumnWidth(2, 220)
         self.table.setColumnWidth(3, 130)
@@ -90,18 +90,21 @@ class EmployeeListView(QWidget):
 
         header = self.table.horizontalHeader()
 
-        # Keep Action column fixed.
-        header.setSectionResizeMode(
-            6,
-            QHeaderView.Fixed
-        )
-
         # Other columns resize according to content/space.
         for column in range(6):
             header.setSectionResizeMode(
                 column,
                 QHeaderView.Stretch
             )
+            
+        header.setSectionResizeMode(
+            6,
+            QHeaderView.Fixed)
+        
+        header.setSectionResizeMode(
+            6,
+            180
+        )
 
         # ---------------- Main Layout ----------------
 
@@ -192,7 +195,7 @@ class EmployeeListView(QWidget):
     def add_employee(self, employee):
 
         # Gets the current number of rows.
-        row = self.table.rowCount()
+        row = 0
 
         # Creates a new row.
         self.table.insertRow(row)
@@ -200,22 +203,22 @@ class EmployeeListView(QWidget):
         # Adds employee data to the first 6 columns.
         for column, value in enumerate(employee):
 
+            item = QTableWidgetItem(str(value))
+            
+
+
+            # Centers selected columns.
+            if column in [0, 1, 2, 3, 4, 5]:
+
+                item.setTextAlignment(
+                    Qt.AlignCenter
+                )
+                
             self.table.setItem(
-                row,
-                column,
-                QTableWidgetItem(value)
-            )
-
-
-        # Centers selected columns.
-        for column in [0, 3, 4, 5]:
-
-            self.table.item(
-                row,
-                column
-            ).setTextAlignment(
-                Qt.AlignCenter
-            )
+                    row,
+                    column,
+                    item
+                )
 
         # ---------------- Buttons ----------------
 

@@ -23,13 +23,16 @@ class MainController:
             self.open_employee_list
         )
 
+        #shared employee dictionary 
+        self.main_dict = {}
 
         # ---------------- Controllers ----------------
 
         # Creates EmployeeListController.
         self.employee_list_controller = EmployeeListController(
             self.view.employee_list_view,
-            self.view
+            self.view,
+            self.main_dict
         )
 
 
@@ -37,7 +40,8 @@ class MainController:
         self.register_controller = RegisterController(
             self.view.register_view,
             self.view.employee_list_view,
-            self.view
+            self.view,
+            self.main_dict
         )
 
 
