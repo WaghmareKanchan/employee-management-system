@@ -1,31 +1,64 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication 
-
-from view.main_view import MainView 
-from controller.main_controller import MainController 
-
-# Creates the PyQt application object.
-# sys.argv contains the command-line arguments passed to the application.
-app = QApplication(sys.argv)
+from PyQt5.QtWidgets import QApplication
 
 
-# Creates the main GUI window.
-# MainView contains the complete UI and different pages.
-window = MainView() 
+# ---------------- Views ----------------
+
+from view.login_view import LoginView
+
+from view.main_view import MainView
+
+from view.dashboard_view import DashboardView
 
 
-# Creates the MainController.
-# Controller connects the GUI buttons and views with the required logic.
-controller = MainController(window)
+# ---------------- Controllers ----------------
+
+from controller.login_controller import LoginController
+
+from controller.main_controller import MainController
 
 
-# Displays the main window on the screen.
-window.show() 
+# ---------------- Application ----------------
+
+app = QApplication(
+    sys.argv
+)
 
 
-# Starts the PyQt event loop.
-# It keeps the application running and listens for user actions
-# such as button clicks.
-sys.exit(app.exec_())
+# ---------------- Create Views ----------------
 
+login_view = LoginView()
+
+main_view = MainView()
+
+dashboard_view = DashboardView()
+
+
+# ---------------- Create Controllers ----------------
+
+login_controller = LoginController(
+    login_view,
+    main_view,
+    dashboard_view
+)
+
+
+main_controller = MainController(
+    main_view,
+    login_view,
+    dashboard_view,
+    
+)
+
+
+# ---------------- Start Application ----------------
+
+login_view.show()
+
+
+# ---------------- Event Loop ----------------
+
+sys.exit(
+    app.exec_()
+)

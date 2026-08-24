@@ -3,7 +3,7 @@ import json
 
 class RegisterController:
     
-    def __init__(self,view, employee_list_view, main_view,main_dict):
+    def __init__(self,view, employee_list_view, main_view,main_dict,dashboard_controller):
         
         # Stores the RegisterView object.
         # This gives the controller access to the Register GUI
@@ -24,6 +24,8 @@ class RegisterController:
         
         self.count = 0
         self.main_dict = main_dict
+        
+        self.dashboard_controller = dashboard_controller
         
         # Connects the RegisterView signal to the controller method.
         #
@@ -153,6 +155,10 @@ class RegisterController:
         # The data entered by the user through the GUI
         # is added as a new row in the employee table.
         self.employee_list_view.add_employee(employee_for_table)
+        
+        # Update Dashboard count
+
+        self.dashboard_controller.update_counts()
         
         
         
