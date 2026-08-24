@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 
 class EmployeeListController:
 
-    def __init__(self, view, main_view, main_dict):
+    def __init__(self, view, main_view, main_dict, dashboard_controller):
 
         # EmployeeListView reference
         self.view = view
@@ -15,6 +15,8 @@ class EmployeeListController:
 
         # Shared employee dictionary
         self.main_dict = main_dict
+        
+        self.dashboard_controller = dashboard_controller
 
         # View button signal
         self.view.view_employee_signal.connect(
@@ -62,68 +64,58 @@ class EmployeeListController:
         # JSON key
         key = "Employee " + employee_id
 
-        # ---------------- JSON UPDATE ----------------
+
+        # ==================================================
+        # DELETE FROM MAIN DICT
+        # ==================================================
 
         if key in self.main_dict:
 
-            # Keep Employee ID unchanged.
-            self.main_dict[key]["Name"] = ""
-            self.main_dict[key]["Email"] = ""
-            self.main_dict[key]["Phone"] = ""
-            self.main_dict[key]["Department"] = ""
-            self.main_dict[key]["Salary"] = ""
+            del self.main_dict[key]
 
-       
 
-        # Search employee row using Employee ID.
-        # ---------------- TABLE ----------------
+        # ==================================================
+        # DELETE COMPLETE TABLE ROW
+        # ==================================================
 
-        for row in range(self.view.table.rowCount()):
+        for row in range(
+            self.view.table.rowCount()
+        ):
 
-            table_item = self.view.table.item(row, 0)
+            table_item = self.view.table.item(
+                row,
+                0
+            )
+
 
             if table_item is not None:
 
                 table_id = table_item.text()
 
+
                 if table_id == employee_id:
 
-                    # Keep Employee ID.
-                    # Clear Name, Email, Phone,
-                    # Department and Salary.
-
-                    for column in range(1, 6):
-
-                        self.view.table.setItem(
-                            row,
-                            column,
-                            QTableWidgetItem("")
-                        )
-
-                    # ---------------- ACTION BUTTONS ----------------
-
-                    button_widget = self.view.table.cellWidget(
-                        row,
-                        6
-                    )
-
-                    if button_widget is not None:
-
-                        self.view.table.removeCellWidget(
-                            row,
-                            6
-                        )
-
-                    # Return to Employee List.
-                    self.main_view.stack.setCurrentWidget(
-                        self.main_view.employee_list_view
+                    # Remove complete row
+                    self.view.table.removeRow(
+                        row
                     )
 
                     break
 
-        # ---------------- CHECK JSON ----------------
+
+        # ==================================================
+        # UPDATE DASHBOARD COUNTS
+        # ==================================================
+
+        self.dashboard_controller.update_counts()
+
+
+        # ==================================================
+        # CHECK JSON
+        # ==================================================
 
         print("AFTER DELETE")
+
         print(
             json.dumps(
                 self.main_dict,
@@ -131,7 +123,10 @@ class EmployeeListController:
             )
         )
 
-        # ---------------- BACK TO LIST ----------------
+
+        # ==================================================
+        # BACK TO EMPLOYEE LIST
+        # ==================================================
 
         self.main_view.stack.setCurrentWidget(
             self.main_view.employee_list_view

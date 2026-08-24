@@ -47,6 +47,10 @@ class MainView(QWidget):
         self.employee_list_button = QPushButton(
             "Employee List"
         )
+        
+        self.logout_button = QPushButton(
+            "Logout"
+        )
 
 
         # ---------------- Sidebar Layout ----------------
@@ -77,6 +81,13 @@ class MainView(QWidget):
 
         # Empty space below buttons.
         self.sidebar_layout.addStretch()
+        
+        
+        # Logout at bottom
+
+        self.sidebar_layout.addWidget(
+            self.logout_button
+        )
 
 
         # ---------------- Sidebar Widget ----------------
